@@ -1,0 +1,6 @@
+/target
+*.so
+*.dylib
+*.pyd
+*.tdms
+.DS_Store
