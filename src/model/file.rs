@@ -67,23 +67,24 @@ impl TdmsFile {
 
             // Update Object Hierarchy & Properties
             for obj in &segment_index.objects {
-                if obj.path == "/" {
+                let clean_path = obj.path.trim_matches('\'');
+                if clean_path == "/" || clean_path == "'/'" || obj.path == "/" || obj.path == "'/'" {
                     root_properties.extend(obj.properties.clone());
                 } else {
-                    let parts: Vec<&str> = obj.path.split('/').filter(|s| !s.is_empty()).collect();
+                    let parts: Vec<&str> = clean_path.split('/').filter(|s| !s.is_empty()).collect();
                     if parts.len() == 1 {
-                        let group_name = parts[0].trim_matches('"');
+                        let group_name = parts[0].trim_matches('\'').trim_matches('"');
                         let group = groups
                             .entry(group_name.to_string())
                             .or_insert_with(|| TdmsGroup::new(group_name.to_string(), obj.path.clone()));
                         group.properties.extend(obj.properties.clone());
-                    } else if parts.len() == 2 {
-                        let group_name = parts[0].trim_matches('"');
-                        let channel_name = parts[1].trim_matches('"');
+                    } else if parts.len() >= 2 {
+                        let group_name = parts[0].trim_matches('\'').trim_matches('"');
+                        let channel_name = parts[1].trim_matches('\'').trim_matches('"');
 
                         let group = groups
                             .entry(group_name.to_string())
-                            .or_insert_with(|| TdmsGroup::new(group_name.to_string(), format!("/\"{}\"", group_name)));
+                            .or_insert_with(|| TdmsGroup::new(group_name.to_string(), format!("/'\"{}\"'", group_name)));
 
                         let channel = group
                             .channels
@@ -164,7 +165,9 @@ impl TdmsFile {
             let raw_slice = &self.mmap[raw_start..raw_end];
 
             for obj in &segment.objects {
-                if obj.path == target_path {
+                let clean_obj = obj.path.trim_matches('\'').replace("'", "").replace("\"", "");
+                let clean_target = format!("/{}", group_name) + &format!("/{}", channel_name);
+                if clean_obj == clean_target || obj.path.contains(group_name) && obj.path.contains(channel_name) {
                     if let Some(ref idx) = obj.raw_data_index {
                         let count = idx.number_of_values as usize;
                         let chunk_data = T::read_slice(raw_slice, segment.header.is_big_endian, count)?;

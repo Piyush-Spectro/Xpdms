@@ -33,24 +33,25 @@ impl TdmsWriter {
 
         let metadata_start = buffer.len();
 
-        // 3 Objects: "/", "/\"Group\"", "/\"Group\"/\"Channel\""
+        // 3 Objects: "/", "/'Group'", "/'Group'/'Channel'"
         buffer.extend_from_slice(&(3u32).to_le_bytes());
 
         // Root "/"
-        buffer.extend_from_slice(&(1u32).to_le_bytes());
-        buffer.extend_from_slice(b"/");
+        let root_path = "/";
+        buffer.extend_from_slice(&(root_path.len() as u32).to_le_bytes());
+        buffer.extend_from_slice(root_path.as_bytes());
         buffer.extend_from_slice(&(0xFFFF_FFFFu32).to_le_bytes());
         buffer.extend_from_slice(&(0u32).to_le_bytes());
 
         // Group
-        let group_path = format!("/\"{}\"", group_name);
+        let group_path = format!("/'{}'", group_name);
         buffer.extend_from_slice(&(group_path.len() as u32).to_le_bytes());
         buffer.extend_from_slice(group_path.as_bytes());
         buffer.extend_from_slice(&(0xFFFF_FFFFu32).to_le_bytes());
         buffer.extend_from_slice(&(0u32).to_le_bytes());
 
         // Channel
-        let chan_path = format!("/\"{}\"/\"{}\"", group_name, channel_name);
+        let chan_path = format!("/'{}'/'{}'", group_name, channel_name);
         buffer.extend_from_slice(&(chan_path.len() as u32).to_le_bytes());
         buffer.extend_from_slice(chan_path.as_bytes());
         buffer.extend_from_slice(&(20u32).to_le_bytes());
