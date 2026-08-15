@@ -1,10 +1,10 @@
-# xpTDMS Comprehensive Benchmark Report 🚀
+# xpTDMS Comprehensive Benchmark Report 
 
 This document details the performance metrics, read/write throughput, memory footprint, and comparative benchmarks of **`xpTDMS` (Rust)** versus **`npTDMS` (Python)**.
 
 ---
 
-## ⚡ Performance Summary
+## Performance Summary
 
 Benchmarks evaluated on 1,000,000 double-precision floating-point samples (8 MB binary payload):
 
@@ -16,22 +16,22 @@ Benchmarks evaluated on 1,000,000 double-precision floating-point samples (8 MB 
 
 ---
 
-## 📊 Comparative Benchmark: `xpTDMS` (Rust) vs `npTDMS` (Python)
+## Comparative Benchmark: `xpTDMS` (Rust) vs `npTDMS` (Python)
 
 Below is a direct architectural and performance comparison against `npTDMS`:
 
 | Benchmark Category | Python `npTDMS` | Rust `xpTDMS` | Performance Advantage |
 |---|---|---|---|
-| **Read Speed (1M samples)** | ~85 - 140 ms | **5.39 ms** | 🚀 **15x to 25x Faster** |
-| **File Open Latency (10GB file)** | 2.5s - 12.0s (full parse) | **0.15 ms** (virtual mmap) | ⚡ **> 10,000x Faster** |
-| **RAM Footprint (10GB file)** | High (10GB+ loaded into RAM) | Near Zero (~few MB metadata) | 📉 **> 99% RAM Reduction** |
-| **2GB+ Segment Handling** | Crashes (`OverflowError: int32`) | Unlimited (`u64` 64-bit indexing) | ✅ **No Segment Size Limits** |
-| **Chunk Streaming** | Errors if misaligned (`#337`) | Seamless (`ChunkIterator<T>`) | ✅ **Arbitrary Chunk Sizes** |
-| **Property Type Preservation** | Drops datatypes on write | Preserves exact `PropertyValue` | ✅ **Zero Data Type Loss** |
+| **Read Speed (1M samples)** | ~85 - 140 ms | **5.39 ms** | **15x to 25x Faster** |
+| **File Open Latency (10GB file)** | 2.5s - 12.0s (full parse) | **0.15 ms** (virtual mmap) | **> 10,000x Faster** |
+| **RAM Footprint (10GB file)** | High (10GB+ loaded into RAM) | Near Zero (~few MB metadata) | **> 99% RAM Reduction** |
+| **2GB+ Segment Handling** | Crashes (`OverflowError: int32`) | Unlimited (`u64` 64-bit indexing) | **No Segment Size Limits** |
+| **Chunk Streaming** | Errors if misaligned (`#337`) | Seamless (`ChunkIterator<T>`) | **Arbitrary Chunk Sizes** |
+| **Property Type Preservation** | Drops datatypes on write | Preserves exact `PropertyValue` | **Zero Data Type Loss** |
 
 ---
 
-## 🧪 Benchmark Test Setup & System Environment
+## Benchmark Test Setup & System Environment
 
 - **CPU Architecture**: Apple Silicon (arm64)
 - **Rust Toolchain**: `rustc 1.97.1` (Release profile optimized)
@@ -40,7 +40,7 @@ Below is a direct architectural and performance comparison against `npTDMS`:
 
 ---
 
-## 💻 How to Run Benchmarks Locally
+## How to Run Benchmarks Locally
 
 ### 1. Execute Benchmark Suite via Cargo
 ```bash
@@ -59,7 +59,7 @@ Benchmark completed successfully!
 
 ---
 
-## 🔍 Detailed Component Benchmarks
+## Detailed Component Benchmarks
 
 ### 1. Zero-Copy File Opening (`TdmsFile::open`)
 Instead of copying binary payloads into heap memory, `xpTDMS` leverages the OS virtual memory subsystem (`mmap`). This guarantees that opening a 10 GB file takes the exact same **150 microsecond** index latency as a 10 MB file.
