@@ -148,7 +148,6 @@ impl TdmsFile {
         }
 
         let mut data = Vec::with_capacity(channel.number_of_values as usize);
-        let target_path = format!("/\"{}\"/\"{}\"", group_name, channel_name);
 
         for segment in &self.segments {
             if !segment.header.has_raw_data {
